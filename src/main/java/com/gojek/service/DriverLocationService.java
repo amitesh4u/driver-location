@@ -25,10 +25,14 @@ public class DriverLocationService {
 
     private static Logger logger = Logger.getLogger(DriverLocationService.class);
 
+    /**
+     * Create and return ResponseEntity object from ErrorMessages object
+     * @param errorMessages
+     * @return ResponseEntity
+     */
     public static ResponseEntity getErrorResponseEntity(ErrorMessages errorMessages) {
         List<String> errMsgs = errorMessages.getErrors();
         ObjectMapper writeMapper = new ObjectMapper();
-        ResponseEntity responseEntity;
         String errJson;
         try {
             errJson = writeMapper.writeValueAsString(errorMessages);
@@ -38,8 +42,7 @@ public class DriverLocationService {
         }
         logger.debug("ErrorMessageJson: " + errJson);
 
-        responseEntity = new ResponseEntity<>(errJson, HttpStatus.UNPROCESSABLE_ENTITY);
-        return responseEntity;
+        return new ResponseEntity<>(errJson, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
 }
