@@ -21,7 +21,7 @@
     </parent>
 
     <dependencies>
-        <!-- Add Spring dependencies for a web application -->
+        <!-- Added Spring dependencies for a web application -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -41,7 +41,17 @@
             <artifactId>json-path</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Added Logger dependencies -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
+
 
     <build>
         <plugins>
@@ -66,4 +76,48 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/global</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources/dev</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>qa</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/global</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources/qa</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/global</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources/prod</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
 </project>
