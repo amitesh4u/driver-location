@@ -11,6 +11,7 @@ package com.gojek.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gojek.config.EnvConfig;
 import com.gojek.config.ValidationConfig;
+import com.gojek.database.DriverLocationRepository;
 import com.gojek.domain.DriverLocation;
 import com.gojek.domain.ErrorMessages;
 import com.gojek.domain.UserRequest;
@@ -53,6 +54,9 @@ public class DriverLocationController {
     @Autowired
     private DriverLocationService dls;
 
+    @Autowired
+    private DriverLocationRepository dlRepository;
+
    @RequestMapping(method = RequestMethod.GET, value = "/")
     public void defaultMethod() {
         logger.info("This is an info log entry");
@@ -91,9 +95,12 @@ public class DriverLocationController {
         /* Validate for invalid data and return errors as JSON */
         ErrorMessages errorMessages = vs.validateData(location);
         List<String> errMsgs = errorMessages.getErrors();
-
+        logger.debug("Error messages: " + errMsgs);
         ResponseEntity responseEntity = null;
         if (errMsgs.isEmpty()) {
+            location.setId(id);
+            location.setAt(LocalDateTime.now());
+            dlRepository.save(location);
             responseEntity = RESPONSE_ENTITY_OK;
         } else {
             responseEntity = dls.getErrorResponseEntity(errorMessages);
@@ -115,44 +122,73 @@ public class DriverLocationController {
 
         ResponseEntity responseEntity = null;
         if (errMsgs.isEmpty()) {
-            List<DriverLocation> driverLocations = new ArrayList<>();
-            DriverLocation ds = new DriverLocation(5,12.98,77.97,0.7, LocalDateTime.now());
-            driverLocations.add(ds);
-
             long dataFreshnessLimitInMin = envConfig.getDataFreshnessLimitInMin();
             logger.debug("Data Freshness Limit: " + dataFreshnessLimitInMin + " min");
+
+            List<DriverLocation> driverLocations;
             if (dataFreshnessLimitInMin <= 0) {
                 //Find all data
+                driverLocations = dlRepository.findAll();
             } else {
                 LocalDateTime timeLimit = LocalDateTime.now().minus(limit, ChronoUnit.MINUTES);
                 logger.debug("Time limit above which driver's location data will be considered: " + timeLimit);
                 //Find data inserted within time limit
+                driverLocations = dlRepository.findByAtGreaterThan(timeLimit);
             }
             List<UserResponse> userResponses = new ArrayList<>();
+            double latitude1 =  userRequest.getLatitude();
+            double longitude1 =  userRequest.getLongitude();
             for (DriverLocation driverLocation : driverLocations) {
-                System.out.println(driverLocation);
-                UserResponse userResponse = new UserResponse();
-                userResponse.setId(driverLocation.getId());
-                userResponse.setLatitude(driverLocation.getLatitude());
-                userResponse.setLongitude(driverLocation.getLongitude());
-                userResponse.setDistance((int) GeoUtil.distanceBetweenCoordinatesMeters(driverLocation.getLatitude(), driverLocation.getLongitude(), userRequest.getLatitude(), userRequest.getLongitude()));
+                logger.debug("Driver Location: " + driverLocation);
+                double latitude2 = driverLocation.getLatitude();
+                double longitude2 = driverLocation.getLongitude();
+                double accuracy = driverLocation.getAccuracy();
 
-                userResponses.add(userResponse);
+                /* Due to accuracy there is a range of Latitude/Longitude.
+                 * By picking one Latitude/Longitude for comparison, we can reduce the comparisons by 50%.
+                 *
+                 * Steps:
+                 *  If Driver's Lat/Long is greater then User Lat/Long then use Driver's Lat/Long + Accuracy for comparison
+                 *  else use Lat/Long - Accuracy for comparison
+                 */
+                latitude2 = (latitude2 > latitude1)? latitude2 + accuracy : latitude2 - accuracy;
+                longitude2 = (longitude2 > longitude1)? longitude2 + accuracy : longitude2 - accuracy;
+
+                /* Reset the boundary */
+                latitude2 = latitude2 > vc.getLatitudeMax() ?  vc.getLatitudeMax() : latitude2;
+                latitude2 = latitude2 < vc.getLatitudeMin() ?  vc.getLatitudeMin() : latitude2;
+                longitude2 = longitude2 > vc.getLongitudeMax() ?  vc.getLongitudeMax(): longitude2;
+                longitude2 = longitude2 < vc.getLongitudeMin() ?  vc.getLongitudeMin(): longitude2;
+
+                logger.debug("Updated Driver's Latitude and Longitude for comparison: " + latitude2 + "|" + longitude2);
+
+                int distance = (int) GeoUtil.distanceBetweenCoordinatesMeters(latitude1,longitude1,latitude2,longitude2);
+                logger.debug("Distance between co-ordinates in meters: " + distance);
+                radius = userRequest.getRadius();
+                if(distance <= userRequest.getRadius()){
+                    UserResponse userResponse = new UserResponse();
+                    userResponse.setId(driverLocation.getId());
+                    userResponse.setLatitude(latitude2);
+                    userResponse.setLongitude(longitude2);
+                    userResponse.setDistance(distance);
+
+                    userResponses.add(userResponse);
+                }
             }
             if (envConfig.isDriverLocationResponseSortedByDistance()) {
                 userResponses.sort(Comparator.comparingDouble(UserResponse::getDistance));
-                if (envConfig.isDriverLocationResponseSortedAsc()) {
+                if (!envConfig.isDriverLocationResponseSortedAsc()) {
                     Collections.reverse(userResponses);
                 }
             }
             ObjectMapper writeMapper = new ObjectMapper();
             String userResponseJSON;
+            limit = userResponses.size() > userRequest.getLimit()? userRequest.getLimit(): userResponses.size();
             try {
-                limit = userResponses.size() > userRequest.getLimit()? userRequest.getLimit(): userResponses.size();
                 userResponseJSON = writeMapper.writeValueAsString(userResponses.subList(0,limit));
             } catch (IOException e) {
-                logger.error("Error converting ErrorMessages to JSON: " + e.getMessage(), e);
-                userResponseJSON = "\"" + StringUtils.join(userResponses, "\",\"") + "\"";
+                logger.error("Error converting User Response to JSON: " + e.getMessage(), e);
+                userResponseJSON = "[" + StringUtils.join(userResponses.subList(0,limit), ",") + "]";
             }
             logger.debug("UserResponseJSON: " + userResponseJSON);
 
