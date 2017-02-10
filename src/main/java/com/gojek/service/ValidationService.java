@@ -36,17 +36,17 @@ public class ValidationService {
         Double latitude = location.getLatitude();
         logger.debug("Latitude: " + latitude);
         if(latitude == null || latitude < vc.getLatitudeMin() || latitude > vc.getLatitudeMax() ){
-            errMsgs.add("Latitude should be between +/- 90");
+            errMsgs.add("Latitude should be between " +  vc.getLatitudeMin() + " and " +  vc.getLatitudeMax());
         }
         Double longitude = location.getLongitude();
         logger.debug("longitude: " + longitude);
         if(longitude == null || longitude < vc.getLongitudeMin() || longitude > vc.getLongitudeMax() ){
-            errMsgs.add("Longitude should be between +/- 90");
+            errMsgs.add("Longitude should be between " +  vc.getLongitudeMin() + " and " +  vc.getLongitudeMax());
         }
         Double accuracy = location.getAccuracy();
         logger.debug("Accuracy: " + accuracy);
         if(accuracy == null || accuracy < vc.getAccuracyMin() || accuracy > vc.getAccuracyMax() ){
-            errMsgs.add("Accuracy should be between +/- 90");
+            errMsgs.add("Accuracy should be between " +  vc.getAccuracyMin() + " and " +  vc.getAccuracyMax());
         }
         return errorMessages;
     }
@@ -62,12 +62,12 @@ public class ValidationService {
         double latitude = userRequest.getLatitude();
         logger.debug("Latitude: " + latitude);
         if(latitude < vc.getLatitudeMin() || latitude > vc.getLatitudeMax() ){
-            errMsgs.add("Latitude should be between +/- 90");
+            errMsgs.add("Latitude should be between " +  vc.getLatitudeMin() + " and " +  vc.getLatitudeMax());
         }
         double longitude = userRequest.getLongitude();
         logger.debug("longitude: " + longitude);
         if(longitude < vc.getLongitudeMin() || longitude > vc.getLongitudeMax() ){
-            errMsgs.add("Longitude should be between +/- 90");
+            errMsgs.add("Longitude should be between " +  vc.getLongitudeMin() + " and " +  vc.getLongitudeMax());
         }
 
         int limit = userRequest.getLimit();
