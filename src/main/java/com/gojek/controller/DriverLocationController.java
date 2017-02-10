@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.gojek.constants.RequestResponseConstants.RESPONSE_ENTITY_NOT_FOUND;
@@ -79,23 +80,23 @@ public class DriverLocationController {
 
         //JSON from String to Object
         ObjectMapper readMapper = new ObjectMapper();
-        DriverLocation location;
+        DriverLocation driverLocation;
         try {
-            location = readMapper.readValue(locationStatus, DriverLocation.class);
+            driverLocation = readMapper.readValue(locationStatus, DriverLocation.class);
         } catch (IOException e) {
             logger.error("Error converting Location status JSON to Object: " + e.getMessage());
             return new ResponseEntity<>("{\"errors\": [\"Invalid fields in body: Use Latitude,Longitude and Accuracy\"]}", HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         /* Validate for invalid data and return errors as JSON */
-        ErrorMessages errorMessages = vs.validateData(location);
+        ErrorMessages errorMessages = vs.validateData(driverLocation);
         List<String> errMsgs = errorMessages.getErrors();
         logger.debug("Error messages: " + errMsgs);
         ResponseEntity responseEntity;
         if (errMsgs.isEmpty()) {
-            location.setId(id);
-            location.setAt(LocalDateTime.now());
-            dlRepository.save(location);
+            driverLocation.setId(id);
+            driverLocation.setAt(LocalDateTime.now());
+            dlRepository.save(driverLocation);
             responseEntity = RESPONSE_ENTITY_OK;
         } else {
             responseEntity = dls.getErrorResponseEntity(errorMessages);
@@ -130,7 +131,6 @@ public class DriverLocationController {
         }
         return responseEntity;
     }
-
 
 
 }

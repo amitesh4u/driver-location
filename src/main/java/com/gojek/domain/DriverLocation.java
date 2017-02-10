@@ -1,5 +1,8 @@
 package com.gojek.domain;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 
 /**
@@ -9,8 +12,10 @@ import java.time.LocalDateTime;
 /**
  * This class stores Driver location details
  */
+@Document
 public class DriverLocation {
 
+    @Id
     private int id;
     /* Keep type as Object. In case of primitive,
      *  jackson will assign default value 0.0

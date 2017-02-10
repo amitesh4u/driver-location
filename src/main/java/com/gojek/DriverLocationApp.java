@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
+/* Single @SpringBootApplication is equivalent to @Configuration, @EnableAutoConfiguration, @ComponentScan */
 public class DriverLocationApp {
 
     private static Logger logger = Logger.getLogger(DriverLocationApp.class);

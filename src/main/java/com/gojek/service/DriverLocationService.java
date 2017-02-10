@@ -125,26 +125,7 @@ public class DriverLocationService {
         return driverLocationResponses;
     }
 
-    /**
-     * Fetch DriverLocation details from DB
-     * @return List<DriverLocation>
-     */
-    public List<DriverLocation> fetchDriverLocations() {
-        long dataFreshnessLimitInMin = envConfig.getDataFreshnessLimitInMin();
-        logger.debug("Data Freshness Limit: " + dataFreshnessLimitInMin + " min");
 
-        List<DriverLocation> driverLocations;
-        if (dataFreshnessLimitInMin <= 0) {
-            //Find all data
-            driverLocations = dlRepository.findAll();
-        } else {
-            LocalDateTime timeLimit = LocalDateTime.now().minus(envConfig.getDataFreshnessLimitInMin(), ChronoUnit.MINUTES);
-            logger.debug("Time limit only above which driver's location data will be considered: " + timeLimit);
-            //Find data inserted within time limit
-            driverLocations = dlRepository.findByAtGreaterThan(timeLimit);
-        }
-        return driverLocations;
-    }
 
     /**
      * Convert and return Driver Location Response JSON
@@ -166,4 +147,25 @@ public class DriverLocationService {
         return driverLocationResponseJSON;
     }
 
+
+    /**
+     * Fetch DriverLocation details from DB
+     * @return List<DriverLocation>
+     */
+    public List<DriverLocation> fetchDriverLocations() {
+        long dataFreshnessLimitInMin = envConfig.getDataFreshnessLimitInMin();
+        logger.debug("Data Freshness Limit: " + dataFreshnessLimitInMin + " min");
+
+        List<DriverLocation> driverLocations;
+        if (dataFreshnessLimitInMin <= 0) {
+            //Find all data
+            driverLocations = dlRepository.findAll();
+        } else {
+            LocalDateTime timeLimit = LocalDateTime.now().minus(envConfig.getDataFreshnessLimitInMin(), ChronoUnit.MINUTES);
+            logger.debug("Time limit only above which driver's location data will be considered: " + timeLimit);
+            //Find data inserted within time limit
+            driverLocations = dlRepository.findByAtGreaterThan(timeLimit);
+        }
+        return driverLocations;
+    }
 }
