@@ -2,11 +2,9 @@ package com.gojek.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 /**
  * Created by Amitesh on 09-02-2017.
@@ -16,32 +14,34 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 /**
  * This class loads validation related properties (validation.XXX) from files in the given order
  */
+
 @Configuration
+@ConfigurationProperties(prefix = "validation")
 @PropertySources({
         @PropertySource("classpath:common.properties"),
         @PropertySource("classpath:env.properties")
 })
 public class ValidationConfig {
 
-    @Value("${validation.driverIdMin:1}")
-    private int driverIdMin;
-    @Value("${validation.driverIdMax:50000}")
-    private int driverIdMax;
+    @Value("${driverIdMin:1}")
+    private int driverIdMin=1;
+    @Value("${driverIdMax:50000}")
+    private int driverIdMax=50000;
 
-    @Value("${validation.latitudeMin:-90}")
-    private double latitudeMin;
-    @Value("${validation.latitudeMax:90}")
-    private double latitudeMax;
+    @Value("${latitudeMin:-90}")
+    private double latitudeMin=-90;
+    @Value("${latitudeMax:90}")
+    private double latitudeMax=90;
 
-    @Value("${validation.longitudeMin:-180}")
-    private double longitudeMin;
-    @Value("${validation.longitudeMax:180}")
-    private double longitudeMax;
+    @Value("${longitudeMin:-90}")
+    private double longitudeMin=-90;
+    @Value("${longitudeMax:90}")
+    private double longitudeMax=90;
 
-    @Value("${validation.accuracyMin:0}")
-    private double accuracyMin;
-    @Value("${validation.accuracyMax:1}")
-    private double accuracyMax;
+    @Value("${accuracyMin:-90}")
+    private double accuracyMin=-90;
+    @Value("${accuracyMax:90}")
+    private double accuracyMax=90;
 
     public int getDriverIdMin() {
         return driverIdMin;
@@ -73,13 +73,5 @@ public class ValidationConfig {
 
     public double getAccuracyMax() {
         return accuracyMax;
-    }
-
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer p =  new PropertySourcesPlaceholderConfigurer();
-        p.setIgnoreResourceNotFound(true);
-
-        return p;
     }
 }
