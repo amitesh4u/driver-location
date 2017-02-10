@@ -37,11 +37,11 @@ public class UserRequest {
 
     @Override
     public String toString() {
-        return "UserRequest{" +
-                "latitude=\"" + latitude + '\"' +
-                ", longitude=\"" + longitude + '\"' +
-                ", radius=\"" + radius + '\"' +
-                ", limit=\"" + limit + '\"' +
+        return "{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", radius=" + radius +
+                ", limit=" + limit +
                 '}';
     }
 }

@@ -46,11 +46,11 @@ public class UserResponse {
 
     @Override
     public String toString() {
-        return "UserResponse{" +
-                "id=\"" + id + '\"' +
-                ", latitude=\"" + latitude + '\"' +
-                ", longitude=\"" + longitude + '\"' +
-                ", distance=\"" + distance + '\"' +
+        return "{" +
+                "id=" + id +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", distance=" + distance +
                 '}';
     }
 }

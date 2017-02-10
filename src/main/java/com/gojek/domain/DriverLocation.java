@@ -72,11 +72,11 @@ public class DriverLocation {
 
     @Override
     public String toString() {
-        return "DriverLocation{" +
-                "id=\"" + id + '\"' +
-                ", latitude=\"" + latitude + '\"' +
-                ", longitude=\"" + longitude + '\"' +
-                ", accuracy=\"" + accuracy + '\"' +
+        return "{" +
+                "id=" + id +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", accuracy=" + accuracy +
                 ", at=\"" + at + '\"' +
                 '}';
     }
