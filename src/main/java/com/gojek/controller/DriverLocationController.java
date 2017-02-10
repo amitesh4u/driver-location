@@ -13,12 +13,11 @@ import com.gojek.config.EnvConfig;
 import com.gojek.config.ValidationConfig;
 import com.gojek.database.DriverLocationRepository;
 import com.gojek.domain.DriverLocation;
+import com.gojek.domain.DriverLocationRequest;
 import com.gojek.domain.ErrorMessages;
-import com.gojek.domain.UserRequest;
-import com.gojek.domain.UserResponse;
+import com.gojek.domain.DriverLocationResponse;
 import com.gojek.service.DriverLocationService;
 import com.gojek.service.ValidationService;
-import com.gojek.util.GeoUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +27,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static com.gojek.constants.RequestResponseConstants.RESPONSE_ENTITY_NOT_FOUND;
@@ -96,7 +91,7 @@ public class DriverLocationController {
         ErrorMessages errorMessages = vs.validateData(location);
         List<String> errMsgs = errorMessages.getErrors();
         logger.debug("Error messages: " + errMsgs);
-        ResponseEntity responseEntity = null;
+        ResponseEntity responseEntity;
         if (errMsgs.isEmpty()) {
             location.setId(id);
             location.setAt(LocalDateTime.now());
@@ -116,88 +111,26 @@ public class DriverLocationController {
         logger.info("Request to /drivers with input: latitude=" + latitude
                 + " | longitude=" + longitude + " | radius=" + radius + " | limit=" + limit);
 
-        UserRequest userRequest = new UserRequest(latitude, longitude, radius, limit);
-        ErrorMessages errorMessages = vs.validateData(userRequest);
+        DriverLocationRequest driverLocationRequest = new DriverLocationRequest(latitude, longitude, radius, limit);
+        ErrorMessages errorMessages = vs.validateData(driverLocationRequest);
         List<String> errMsgs = errorMessages.getErrors();
+        logger.debug("Error messages: " + errMsgs);
 
-        ResponseEntity responseEntity = null;
+        ResponseEntity responseEntity;
         if (errMsgs.isEmpty()) {
-            long dataFreshnessLimitInMin = envConfig.getDataFreshnessLimitInMin();
-            logger.debug("Data Freshness Limit: " + dataFreshnessLimitInMin + " min");
+            List<DriverLocation> driverLocations = dls.fetchDriverLocations();
 
-            List<DriverLocation> driverLocations;
-            if (dataFreshnessLimitInMin <= 0) {
-                //Find all data
-                driverLocations = dlRepository.findAll();
-            } else {
-                LocalDateTime timeLimit = LocalDateTime.now().minus(limit, ChronoUnit.MINUTES);
-                logger.debug("Time limit above which driver's location data will be considered: " + timeLimit);
-                //Find data inserted within time limit
-                driverLocations = dlRepository.findByAtGreaterThan(timeLimit);
-            }
-            List<UserResponse> userResponses = new ArrayList<>();
-            double latitude1 =  userRequest.getLatitude();
-            double longitude1 =  userRequest.getLongitude();
-            for (DriverLocation driverLocation : driverLocations) {
-                logger.debug("Driver Location: " + driverLocation);
-                double latitude2 = driverLocation.getLatitude();
-                double longitude2 = driverLocation.getLongitude();
-                double accuracy = driverLocation.getAccuracy();
+            List<DriverLocationResponse> driverLocationResponses = dls.fetchDrivers(driverLocationRequest, driverLocations);
 
-                /* Due to accuracy there is a range of Latitude/Longitude.
-                 * By picking one Latitude/Longitude for comparison, we can reduce the comparisons by 50%.
-                 *
-                 * Steps:
-                 *  If Driver's Lat/Long is greater then User Lat/Long then use Driver's Lat/Long + Accuracy for comparison
-                 *  else use Lat/Long - Accuracy for comparison
-                 */
-                latitude2 = (latitude2 > latitude1)? latitude2 + accuracy : latitude2 - accuracy;
-                longitude2 = (longitude2 > longitude1)? longitude2 + accuracy : longitude2 - accuracy;
+            String driverLocationResponseJSON = dls.getDriverLocationResponseJSON(driverLocationRequest, driverLocationResponses);
 
-                /* Reset the boundary */
-                latitude2 = latitude2 > vc.getLatitudeMax() ?  vc.getLatitudeMax() : latitude2;
-                latitude2 = latitude2 < vc.getLatitudeMin() ?  vc.getLatitudeMin() : latitude2;
-                longitude2 = longitude2 > vc.getLongitudeMax() ?  vc.getLongitudeMax(): longitude2;
-                longitude2 = longitude2 < vc.getLongitudeMin() ?  vc.getLongitudeMin(): longitude2;
-
-                logger.debug("Updated Driver's Latitude and Longitude for comparison: " + latitude2 + "|" + longitude2);
-
-                int distance = (int) GeoUtil.distanceBetweenCoordinatesMeters(latitude1,longitude1,latitude2,longitude2);
-                logger.debug("Distance between co-ordinates in meters: " + distance);
-                radius = userRequest.getRadius();
-                if(distance <= userRequest.getRadius()){
-                    UserResponse userResponse = new UserResponse();
-                    userResponse.setId(driverLocation.getId());
-                    userResponse.setLatitude(latitude2);
-                    userResponse.setLongitude(longitude2);
-                    userResponse.setDistance(distance);
-
-                    userResponses.add(userResponse);
-                }
-            }
-            if (envConfig.isDriverLocationResponseSortedByDistance()) {
-                userResponses.sort(Comparator.comparingDouble(UserResponse::getDistance));
-                if (!envConfig.isDriverLocationResponseSortedAsc()) {
-                    Collections.reverse(userResponses);
-                }
-            }
-            ObjectMapper writeMapper = new ObjectMapper();
-            String userResponseJSON;
-            limit = userResponses.size() > userRequest.getLimit()? userRequest.getLimit(): userResponses.size();
-            try {
-                userResponseJSON = writeMapper.writeValueAsString(userResponses.subList(0,limit));
-            } catch (IOException e) {
-                logger.error("Error converting User Response to JSON: " + e.getMessage(), e);
-                userResponseJSON = "[" + StringUtils.join(userResponses.subList(0,limit), ",") + "]";
-            }
-            logger.debug("UserResponseJSON: " + userResponseJSON);
-
-            responseEntity = new ResponseEntity<>(userResponseJSON, HttpStatus.OK);
+            responseEntity = new ResponseEntity<>(driverLocationResponseJSON, HttpStatus.OK);
         } else {
             responseEntity = dls.getErrorResponseEntity(errorMessages);
         }
         return responseEntity;
     }
+
 
 
 }

@@ -2,8 +2,8 @@ package com.gojek.service;
 
 import com.gojek.config.ValidationConfig;
 import com.gojek.domain.DriverLocation;
+import com.gojek.domain.DriverLocationRequest;
 import com.gojek.domain.ErrorMessages;
-import com.gojek.domain.UserRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,31 +52,31 @@ public class ValidationService {
     }
 
     /**
-     * Validate UserRequest object fields and return Error messages object with list of error messages
-     * @param userRequest
+     * Validate DriverLocationRequest object fields and return Error messages object with list of error messages
+     * @param driverLocationRequest
      * @return ErrorMessages
      */
-    public ErrorMessages validateData(UserRequest userRequest) {
+    public ErrorMessages validateData(DriverLocationRequest driverLocationRequest) {
         ErrorMessages errorMessages = new ErrorMessages();
         List<String> errMsgs = errorMessages.getErrors();
-        double latitude = userRequest.getLatitude();
+        double latitude = driverLocationRequest.getLatitude();
         logger.debug("Latitude: " + latitude);
         if(latitude < vc.getLatitudeMin() || latitude > vc.getLatitudeMax() ){
             errMsgs.add("Latitude should be between " +  vc.getLatitudeMin() + " and " +  vc.getLatitudeMax());
         }
-        double longitude = userRequest.getLongitude();
+        double longitude = driverLocationRequest.getLongitude();
         logger.debug("longitude: " + longitude);
         if(longitude < vc.getLongitudeMin() || longitude > vc.getLongitudeMax() ){
             errMsgs.add("Longitude should be between " +  vc.getLongitudeMin() + " and " +  vc.getLongitudeMax());
         }
 
-        int limit = userRequest.getLimit();
+        int limit = driverLocationRequest.getLimit();
         logger.debug("Limit: " + limit);
         if(limit < 1 ){
             errMsgs.add("Limit should be greater than 0");
         }
 
-        int radius = userRequest.getRadius();
+        int radius = driverLocationRequest.getRadius();
         logger.debug("Radius: " + radius);
         if(radius < 1 ){
             errMsgs.add("Radius should be greater than 0");

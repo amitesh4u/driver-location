@@ -5,9 +5,9 @@ package com.gojek.domain;
  */
 
 /**
- * This class stores User Response details which will be sent back to Customer
+ * This class stores Driver Location Response details which will be sent back to Customer
  */
-public class UserResponse {
+public class DriverLocationResponse {
 
     private int id, distance;
     private double latitude, longitude;

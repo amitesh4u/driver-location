@@ -5,14 +5,14 @@ package com.gojek.domain;
  */
 
 /**
- * This class store details of User Request for near by Drivers
+ * This class store details of Driver Location Request for near by Drivers
  */
-public class UserRequest {
+public class DriverLocationRequest {
 
     private int radius, limit;
     private double latitude, longitude;
 
-    public UserRequest(double latitude, double longitude, int radius, int limit){
+    public DriverLocationRequest(double latitude, double longitude, int radius, int limit){
         this.latitude = latitude;
         this.longitude = longitude;
         this.radius = radius;
