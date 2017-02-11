@@ -1,38 +1,24 @@
 package com.gojek;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
- * Unit test for simple App.
+ * Created by Amitesh on 11-02-2017.
  */
-public class DriverLocationAppTest
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public DriverLocationAppTest(String testName )
-    {
-        super( testName );
-    }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( DriverLocationAppTest.class );
-    }
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
+
+/**
+ * Simple sanity check test that will fail if the application context cannot start
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class DriverLocationAppTest {
+
+    @Test
+    public void contextLoads() throws Exception {
     }
 }

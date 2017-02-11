@@ -53,17 +53,10 @@ public class DriverLocationController {
     @Autowired
     private DriverLocationRepository dlRepository;
 
-   @RequestMapping(method = RequestMethod.GET, value = "/")
-    public void defaultMethod() {
-        logger.info("This is an info log entry");
-        logger.debug("This is an debug log entry");
-        logger.error("This is an error log entry");
-
+   @RequestMapping("/")
+    public String defaultMethod() {
         logger.info("Request to /");
-        logger.debug(envConfig.getEnv()
-                + " | " + envConfig.getDataFreshnessLimitInMin()
-                + " | " + envConfig.isDriverLocationResponseSortedByDistance()
-                + " | " + envConfig.isDriverLocationResponseSortedAsc());
+        return "Hello. Please use # PUT /drivers/{id}/location  OR # GET /drivers apis ";
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/drivers/{id}/location")
@@ -99,14 +92,14 @@ public class DriverLocationController {
             dlRepository.save(driverLocation);
             responseEntity = RESPONSE_ENTITY_OK;
         } else {
-            responseEntity = dls.getErrorResponseEntity(errorMessages);
+            responseEntity = dls.getErrorResponseEntity(errorMessages, HttpStatus.UNPROCESSABLE_ENTITY);
         }
         return responseEntity;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/drivers")
-    public ResponseEntity<String> getDrivers(@RequestParam(value = "latitude") double latitude,
-                                             @RequestParam(value = "longitude") double longitude,
+    public ResponseEntity<String> getDrivers(@RequestParam(value = "latitude") Double latitude,
+                                             @RequestParam(value = "longitude") Double longitude,
                                              @RequestParam(value = "radius", defaultValue = "500") int radius,
                                              @RequestParam(value = "limit", defaultValue = "10") int limit) {
         logger.info("Request to /drivers with input: latitude=" + latitude
@@ -127,10 +120,8 @@ public class DriverLocationController {
 
             responseEntity = new ResponseEntity<>(driverLocationResponseJSON, HttpStatus.OK);
         } else {
-            responseEntity = dls.getErrorResponseEntity(errorMessages);
+            responseEntity = dls.getErrorResponseEntity(errorMessages, HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
     }
-
-
 }

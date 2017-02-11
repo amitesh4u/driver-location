@@ -52,7 +52,7 @@ public class DriverLocationService {
      * @param errorMessages
      * @return ResponseEntity
      */
-    public ResponseEntity getErrorResponseEntity(ErrorMessages errorMessages) {
+    public ResponseEntity getErrorResponseEntity(ErrorMessages errorMessages, HttpStatus httpStatus) {
         List<String> errMsgs = errorMessages.getErrors();
         ObjectMapper writeMapper = new ObjectMapper();
         String errJson;
@@ -64,7 +64,7 @@ public class DriverLocationService {
         }
         logger.debug("ErrorMessageJson: " + errJson);
 
-        return new ResponseEntity<>(errJson, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errJson, httpStatus);
     }
 
 
@@ -81,8 +81,9 @@ public class DriverLocationService {
         double longitude1 =  driverLocationRequest.getLongitude();
         for (DriverLocation driverLocation : driverLocations) {
             logger.debug("Driver Location: " + driverLocation);
-            double latitude2 = driverLocation.getLatitude();
-            double longitude2 = driverLocation.getLongitude();
+            System.out.println("Driver Location: " + driverLocation);
+            double latitude2Orig = driverLocation.getLatitude();
+            double longitude2Orig = driverLocation.getLongitude();
             double accuracy = driverLocation.getAccuracy();
 
             /* Due to accuracy there is a range of Latitude/Longitude.
@@ -92,8 +93,8 @@ public class DriverLocationService {
              *  If Driver's Lat/Long is greater then User Lat/Long then use Driver's Lat/Long + Accuracy for comparison
              *  else use Lat/Long - Accuracy for comparison
              */
-            latitude2 = (latitude2 > latitude1)? latitude2 + accuracy : latitude2 - accuracy;
-            longitude2 = (longitude2 > longitude1)? longitude2 + accuracy : longitude2 - accuracy;
+            double latitude2 = (latitude2Orig > latitude1)? latitude2Orig + accuracy : latitude2Orig - accuracy;
+            double longitude2 = (longitude2Orig > longitude1)? longitude2Orig + accuracy : longitude2Orig - accuracy;
             logger.debug("Updated Driver's Latitude and Longitude for comparison: " + latitude2 + "|" + longitude2);
             /* Reset the boundary */
             latitude2 = latitude2 > vc.getLatitudeMax() ?  vc.getLatitudeMax() : latitude2;
@@ -103,14 +104,14 @@ public class DriverLocationService {
 
             logger.debug("Updated Driver's Latitude and Longitude after boundary reset for comparison: " + latitude2 + "|" + longitude2);
 
-            int distance = (int) GeoUtil.distanceBetweenCoordinatesMeters(latitude1,longitude1,latitude2,longitude2);
+            int distance = Math.abs((int) GeoUtil.distanceBetweenCoordinatesMeters(latitude1,longitude1,latitude2,longitude2));
             logger.debug("Distance between co-ordinates in meters: " + distance);
 
             if(distance <= driverLocationRequest.getRadius()){
                 DriverLocationResponse driverLocationResponse = new DriverLocationResponse();
                 driverLocationResponse.setId(driverLocation.getId());
-                driverLocationResponse.setLatitude(latitude2);
-                driverLocationResponse.setLongitude(longitude2);
+                driverLocationResponse.setLatitude(latitude2Orig);
+                driverLocationResponse.setLongitude(longitude2Orig);
                 driverLocationResponse.setDistance(distance);
 
                 driverLocationResponses.add(driverLocationResponse);

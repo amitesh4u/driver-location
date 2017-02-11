@@ -59,14 +59,14 @@ public class ValidationService {
     public ErrorMessages validateData(DriverLocationRequest driverLocationRequest) {
         ErrorMessages errorMessages = new ErrorMessages();
         List<String> errMsgs = errorMessages.getErrors();
-        double latitude = driverLocationRequest.getLatitude();
+        Double latitude = driverLocationRequest.getLatitude();
         logger.debug("Latitude: " + latitude);
-        if(latitude < vc.getLatitudeMin() || latitude > vc.getLatitudeMax() ){
+        if(latitude == null || latitude < vc.getLatitudeMin() || latitude > vc.getLatitudeMax() ){
             errMsgs.add("Latitude should be between " +  vc.getLatitudeMin() + " and " +  vc.getLatitudeMax());
         }
-        double longitude = driverLocationRequest.getLongitude();
+        Double longitude = driverLocationRequest.getLongitude();
         logger.debug("longitude: " + longitude);
-        if(longitude < vc.getLongitudeMin() || longitude > vc.getLongitudeMax() ){
+        if(longitude == null || longitude < vc.getLongitudeMin() || longitude > vc.getLongitudeMax() ){
             errMsgs.add("Longitude should be between " +  vc.getLongitudeMin() + " and " +  vc.getLongitudeMax());
         }
 
