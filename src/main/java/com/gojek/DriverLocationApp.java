@@ -16,7 +16,7 @@ public class DriverLocationApp {
 
     public static void main( String[] args ) {
 
-        logger.debug("Starting Application");
+        logger.info("Starting Application");
         SpringApplication.run(DriverLocationApp.class, args);
     }
 }

@@ -56,21 +56,30 @@ public class DriverLocationController {
    @RequestMapping("/")
     public String defaultMethod() {
         logger.info("Request to /");
-        return "Hello. Please use # PUT /drivers/{id}/location  OR # GET /drivers apis ";
+        return "Hello. Please use # PUT /drivers/{id}/location OR # GET /drivers apis";
     }
 
+    /**
+     * This API is used to save Driver Location
+     * @param idStr
+     * @param locationStatus
+     * @return ResponseEntity<String>
+     */
     @RequestMapping(method = RequestMethod.PUT, value = "/drivers/{id}/location")
     public ResponseEntity<String> setDriverLocation(@PathVariable(value = "id") String idStr, @RequestBody String locationStatus) {
         logger.info("Request to /drivers/" + idStr + "/location with data: " + locationStatus);
 
+        /* Verify if ID is integer */
         if (!StringUtils.isNumeric(idStr)) {
             return RESPONSE_ENTITY_NOT_FOUND;
         }
+        /* Verify if the ID in under limit */
         int id = Integer.parseInt(idStr);
         if (id < vc.getDriverIdMin() || id > vc.getDriverIdMax()) {
             return RESPONSE_ENTITY_NOT_FOUND;
         }
 
+        /* Save the JSON location details to Object */
         //JSON from String to Object
         ObjectMapper readMapper = new ObjectMapper();
         DriverLocation driverLocation;
@@ -84,9 +93,10 @@ public class DriverLocationController {
         /* Validate for invalid data and return errors as JSON */
         ErrorMessages errorMessages = vs.validateData(driverLocation);
         List<String> errMsgs = errorMessages.getErrors();
-        logger.debug("Error messages: " + errMsgs);
+        if(logger.isDebugEnabled()) logger.debug("Error messages: " + errMsgs);
         ResponseEntity responseEntity;
         if (errMsgs.isEmpty()) {
+            /* Save the location details */
             driverLocation.setId(id);
             driverLocation.setAt(LocalDateTime.now());
             dlRepository.save(driverLocation);
@@ -97,6 +107,14 @@ public class DriverLocationController {
         return responseEntity;
     }
 
+    /**
+     * This API returns near by driver location details for the Customer coordinates
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @param limit
+     * @return ResponseEntity<String>
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/drivers")
     public ResponseEntity<String> getDrivers(@RequestParam(value = "latitude") Double latitude,
                                              @RequestParam(value = "longitude") Double longitude,
@@ -105,18 +123,25 @@ public class DriverLocationController {
         logger.info("Request to /drivers with input: latitude=" + latitude
                 + " | longitude=" + longitude + " | radius=" + radius + " | limit=" + limit);
 
+         /* Validate for invalid data and return errors as JSON */
         DriverLocationRequest driverLocationRequest = new DriverLocationRequest(latitude, longitude, radius, limit);
         ErrorMessages errorMessages = vs.validateData(driverLocationRequest);
         List<String> errMsgs = errorMessages.getErrors();
-        logger.debug("Error messages: " + errMsgs);
+        if(logger.isDebugEnabled()) logger.debug("Error messages: " + errMsgs);
 
         ResponseEntity responseEntity;
         if (errMsgs.isEmpty()) {
+            /* Fetch all applicable Driver Locations */
             List<DriverLocation> driverLocations = dls.fetchDriverLocations();
+            if(logger.isDebugEnabled()) logger.debug("Driver Locations: " + driverLocations);
 
+            /* Fetch near by driver locations */
             List<DriverLocationResponse> driverLocationResponses = dls.fetchDrivers(driverLocationRequest, driverLocations);
+            if(logger.isDebugEnabled()) logger.debug("Driver Locations Responses: " + driverLocationResponses);
 
+            /* Convert the result object to JSON */
             String driverLocationResponseJSON = dls.getDriverLocationResponseJSON(driverLocationRequest, driverLocationResponses);
+            if(logger.isDebugEnabled()) logger.debug("Driver Location Response JSON: " + driverLocationResponseJSON);
 
             responseEntity = new ResponseEntity<>(driverLocationResponseJSON, HttpStatus.OK);
         } else {

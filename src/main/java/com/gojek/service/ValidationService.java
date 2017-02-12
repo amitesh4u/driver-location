@@ -34,17 +34,17 @@ public class ValidationService {
         ErrorMessages errorMessages = new ErrorMessages();
         List<String> errMsgs = errorMessages.getErrors();
         Double latitude = location.getLatitude();
-        logger.debug("Latitude: " + latitude);
+        if(logger.isDebugEnabled()) logger.debug("Latitude: " + latitude);
         if(latitude == null || latitude < vc.getLatitudeMin() || latitude > vc.getLatitudeMax() ){
             errMsgs.add("Latitude should be between " +  vc.getLatitudeMin() + " and " +  vc.getLatitudeMax());
         }
         Double longitude = location.getLongitude();
-        logger.debug("longitude: " + longitude);
+        if(logger.isDebugEnabled()) logger.debug("longitude: " + longitude);
         if(longitude == null || longitude < vc.getLongitudeMin() || longitude > vc.getLongitudeMax() ){
             errMsgs.add("Longitude should be between " +  vc.getLongitudeMin() + " and " +  vc.getLongitudeMax());
         }
         Double accuracy = location.getAccuracy();
-        logger.debug("Accuracy: " + accuracy);
+        if(logger.isDebugEnabled()) logger.debug("Accuracy: " + accuracy);
         if(accuracy == null || accuracy < vc.getAccuracyMin() || accuracy > vc.getAccuracyMax() ){
             errMsgs.add("Accuracy should be between " +  vc.getAccuracyMin() + " and " +  vc.getAccuracyMax());
         }
@@ -60,24 +60,24 @@ public class ValidationService {
         ErrorMessages errorMessages = new ErrorMessages();
         List<String> errMsgs = errorMessages.getErrors();
         Double latitude = driverLocationRequest.getLatitude();
-        logger.debug("Latitude: " + latitude);
+        if(logger.isDebugEnabled()) logger.debug("Latitude: " + latitude);
         if(latitude == null || latitude < vc.getLatitudeMin() || latitude > vc.getLatitudeMax() ){
             errMsgs.add("Latitude should be between " +  vc.getLatitudeMin() + " and " +  vc.getLatitudeMax());
         }
         Double longitude = driverLocationRequest.getLongitude();
-        logger.debug("longitude: " + longitude);
+        if(logger.isDebugEnabled()) logger.debug("longitude: " + longitude);
         if(longitude == null || longitude < vc.getLongitudeMin() || longitude > vc.getLongitudeMax() ){
             errMsgs.add("Longitude should be between " +  vc.getLongitudeMin() + " and " +  vc.getLongitudeMax());
         }
 
         int limit = driverLocationRequest.getLimit();
-        logger.debug("Limit: " + limit);
+        if(logger.isDebugEnabled()) logger.debug("Limit: " + limit);
         if(limit < 1 ){
             errMsgs.add("Limit should be greater than 0");
         }
 
         int radius = driverLocationRequest.getRadius();
-        logger.debug("Radius: " + radius);
+        if(logger.isDebugEnabled()) logger.debug("Radius: " + radius);
         if(radius < 1 ){
             errMsgs.add("Radius should be greater than 0");
         }
