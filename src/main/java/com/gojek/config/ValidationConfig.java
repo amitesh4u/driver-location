@@ -74,6 +74,9 @@ public class ValidationConfig {
         return accuracyMax;
     }
 
+    /* @Bean on method indicates that this method will return an object that
+     * should be registered as a bean in the Spring application context.
+     */
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p =  new PropertySourcesPlaceholderConfigurer();

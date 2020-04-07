@@ -139,6 +139,10 @@ public class DriverLocationController {
             List<DriverLocationResponse> driverLocationResponses = dls.fetchDrivers(driverLocationRequest, driverLocations);
             if(logger.isDebugEnabled()) logger.debug("Driver Locations Responses: " + driverLocationResponses);
 
+            /* Sort by Distance */
+            dls.sortByDistance(driverLocationResponses);
+            if(logger.isDebugEnabled()) logger.debug("Driver Locations Responses sorted: " + driverLocationResponses);
+
             /* Convert the result object to JSON */
             String driverLocationResponseJSON = dls.getDriverLocationResponseJSON(driverLocationRequest, driverLocationResponses);
             if(logger.isDebugEnabled()) logger.debug("Driver Location Response JSON: " + driverLocationResponseJSON);

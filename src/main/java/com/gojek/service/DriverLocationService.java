@@ -121,16 +121,18 @@ public class DriverLocationService {
                 driverLocationResponses.add(driverLocationResponse);
             }
         }
-        /* Sort by distance */
+        return driverLocationResponses;
+    }
+
+    public void sortByDistance(List<DriverLocationResponse> driverLocationResponses) {
+    /* Sort by distance */
         if (envConfig.isDriverLocationResponseSortedByDistance()) {
             driverLocationResponses.sort(Comparator.comparingDouble(DriverLocationResponse::getDistance));
             if (!envConfig.isDriverLocationResponseSortedAsc()) {
                 Collections.reverse(driverLocationResponses);
             }
         }
-        return driverLocationResponses;
     }
-
 
 
     /**

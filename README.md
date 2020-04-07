@@ -1,6 +1,6 @@
 # Go-Jek Codathon Project
 
-This is a Java / Maven / Spring Boot / MondoDB based application that can be used to consume Driver Locations and then return Near by Driver locations as per Customer location.
+This is a Java / Maven / Spring Boot / MongoDB based application that can be used to consume Driver Locations and then return Near by Driver locations as per Customer location.
 
 # Why this Tech Stack
 
