@@ -1,4 +1,4 @@
-package com.gojek.domain;
+package com.amitesh.domain;
 
 import org.apache.commons.lang3.StringUtils;
 

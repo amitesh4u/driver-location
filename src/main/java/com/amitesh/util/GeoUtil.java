@@ -1,4 +1,4 @@
-package com.gojek.util;
+package com.amitesh.util;
 
 /**
  * Created by Amitesh on 09-02-2017.

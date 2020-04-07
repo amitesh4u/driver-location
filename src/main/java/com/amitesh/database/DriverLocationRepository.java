@@ -1,6 +1,6 @@
-package com.gojek.database;
+package com.amitesh.database;
 
-import com.gojek.domain.DriverLocation;
+import com.amitesh.domain.DriverLocation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.gojek.constants;
+package com.amitesh.constants;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

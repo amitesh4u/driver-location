@@ -1,4 +1,4 @@
-package com.gojek.config;
+package com.amitesh.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

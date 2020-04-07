@@ -1,4 +1,4 @@
-package com.gojek.domain;
+package com.amitesh.domain;
 
 /**
  * Created by Amitesh on 09-02-2017.

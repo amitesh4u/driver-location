@@ -1,4 +1,4 @@
-package com.gojek.controller;
+package com.amitesh.controller;
 
 /**
  * Created by Amitesh on 04-02-2017.
@@ -9,15 +9,15 @@ package com.gojek.controller;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gojek.config.EnvConfig;
-import com.gojek.config.ValidationConfig;
-import com.gojek.database.DriverLocationRepository;
-import com.gojek.domain.DriverLocation;
-import com.gojek.domain.DriverLocationRequest;
-import com.gojek.domain.ErrorMessages;
-import com.gojek.domain.DriverLocationResponse;
-import com.gojek.service.DriverLocationService;
-import com.gojek.service.ValidationService;
+import com.amitesh.config.EnvConfig;
+import com.amitesh.config.ValidationConfig;
+import com.amitesh.database.DriverLocationRepository;
+import com.amitesh.domain.DriverLocation;
+import com.amitesh.domain.DriverLocationRequest;
+import com.amitesh.domain.ErrorMessages;
+import com.amitesh.domain.DriverLocationResponse;
+import com.amitesh.service.DriverLocationService;
+import com.amitesh.service.ValidationService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static com.gojek.constants.RequestResponseConstants.RESPONSE_ENTITY_NOT_FOUND;
-import static com.gojek.constants.RequestResponseConstants.RESPONSE_ENTITY_OK;
+import static com.amitesh.constants.RequestResponseConstants.RESPONSE_ENTITY_NOT_FOUND;
+import static com.amitesh.constants.RequestResponseConstants.RESPONSE_ENTITY_OK;
 
 @RestController
 public class DriverLocationController {

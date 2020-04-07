@@ -1,9 +1,9 @@
-package com.gojek.controller;
+package com.amitesh.controller;
 
-import com.gojek.SpringMongoConfiguration;
-import com.gojek.config.ValidationConfig;
-import com.gojek.database.DriverLocationRepository;
-import com.gojek.domain.DriverLocation;
+import com.amitesh.SpringMongoConfiguration;
+import com.amitesh.config.ValidationConfig;
+import com.amitesh.database.DriverLocationRepository;
+import com.amitesh.domain.DriverLocation;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

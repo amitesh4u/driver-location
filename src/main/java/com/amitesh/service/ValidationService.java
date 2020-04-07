@@ -1,9 +1,9 @@
-package com.gojek.service;
+package com.amitesh.service;
 
-import com.gojek.config.ValidationConfig;
-import com.gojek.domain.DriverLocation;
-import com.gojek.domain.DriverLocationRequest;
-import com.gojek.domain.ErrorMessages;
+import com.amitesh.config.ValidationConfig;
+import com.amitesh.domain.DriverLocation;
+import com.amitesh.domain.DriverLocationRequest;
+import com.amitesh.domain.ErrorMessages;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.gojek.config;
+package com.amitesh.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +17,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @PropertySources({
-        @PropertySource("classpath:common.properties"),
-        @PropertySource("classpath:env.properties")
+        @PropertySource(value="classpath:common.properties", ignoreResourceNotFound = true),
+        @PropertySource(value="classpath:env.properties", ignoreResourceNotFound = true)
 })
 public class EnvConfig {
 
@@ -55,9 +55,6 @@ public class EnvConfig {
     */
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer p =  new PropertySourcesPlaceholderConfigurer();
-        p.setIgnoreResourceNotFound(true);
-
-        return p;
+    	return  new PropertySourcesPlaceholderConfigurer();
     }
 }

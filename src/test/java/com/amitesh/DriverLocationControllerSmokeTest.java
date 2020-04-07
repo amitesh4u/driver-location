@@ -1,8 +1,8 @@
-package com.gojek;
+package com.amitesh;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.gojek.controller.DriverLocationController;
+import com.amitesh.controller.DriverLocationController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
