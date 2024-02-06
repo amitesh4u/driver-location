@@ -1,11 +1,9 @@
-# Go-Jek Codathon Project
+# Go-Jek Codathon Project 2017
 
 This is a Java / Maven / Spring Boot / MongoDB based application that can be used to consume Driver Locations and then return Near by Driver locations as per Customer location.
 
 # Why this Tech Stack
 
-* I would have gone for NodeJS but since OOP language was required and I am from JAVA background so picked it.
- 
 * Maven and Gradle are currently the Top build tools. **Maven** has an upper hand over **Ant** as it is more structured and has better *dependency management* where we just declare the dependency and Maven will download them, along with the dependencies of the dependency, add them to class path etc. I have hands-on on Maven so picked it over Gradle.
 
 * Spring-Boot is a light-weighted suite of pre-configured applications which provides the MVC structure, dependency injection with less code and xml configurations as compared to Core Spring framework. It is easy to create RESTful services (among other types of applications). 
